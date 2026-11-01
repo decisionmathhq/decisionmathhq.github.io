@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HSA vs FSA Calculator (2027 limits) | Decision Math</title>
+<meta name="description" content="See how much tax an HSA or FSA saves you, what the FSA's use-it-or-lose-it rule could cost, and what an invested HSA could grow to. 2027 HSA limits, 2026 federal tax brackets.">
+<link rel="canonical" href="https://decisionmathhq.github.io/calculators/hsa-vs-fsa.html">
+<meta property="og:title" content="HSA vs FSA Calculator (2027 limits) | Decision Math">
+<meta property="og:description" content="See how much tax an HSA or FSA saves you, what the FSA's use-it-or-lose-it rule could cost, and what an invested HSA could grow to. 2027 HSA limits, 2026 federal tax brackets.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://decisionmathhq.github.io/calculators/hsa-vs-fsa.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="top"><div>
+  <a class="brand" href="../index.html">Decision <span>Math</span></a>
+  <nav><a href="../index.html#calculators">Calculators</a><a href="../index.html#videos">Videos</a><a href="../sources.html">Sources &amp; updates</a><a href="https://www.youtube.com/@decisionmathhq">YouTube</a></nav>
+</div></header>
+<main>
+<p class="kicker">Free calculator</p>
+<h1>HSA vs FSA calculator</h1>
+<p class="lede">Enter your salary and expected medical costs. The calculator shows the tax you save in year one, how much an FSA could forfeit, and what an invested HSA could grow to.</p>
+<div class="calc" style="margin-top:22px">
+  <form class="panel" id="inputs" onsubmit="return false"></form>
+  <section class="panel" aria-live="polite"><h3>Your results</h3><div id="results"></div></section>
+</div>
+<p class="note">Prefer a spreadsheet? <a href="https://docs.google.com/spreadsheets/d/150rJin0L-3QXdQKo2UnybrlO43rTgeh7x3YpiY687Fg/copy">Make your own copy in Google Sheets</a> (same math).</p><p class="note">Watch the walkthrough: <a href="../videos/hsa-vs-fsa.html">HSA vs FSA: Which One Should You Pick? (The Real Math)</a>.</p>
+<h2>How this calculator works</h2>
+<p>On the same dollars, an HSA and an FSA save exactly the same tax in year one: both skip federal income tax, and both skip Social Security and Medicare tax when they go through payroll. The differences are what happens to unspent money and how much you can put in.</p>
+<ul><li><b>FSA:</b> money you don't spend by the deadline is lost, unless your plan offers a carryover or a grace period (a plan can offer one or the other, not both: IRS Publication 969; Notice 2013-71).</li>
+<li><b>HSA:</b> the money is yours to keep and can be invested. You need a qualifying high-deductible health plan.</li>
+<li><b>Receipts strategy:</b> one approach some people use is to pay medical costs out of pocket, keep the receipts, and leave the full HSA invested. IRS Publication 969 sets no deadline for reimbursing yourself for qualified costs incurred after the HSA was opened.</li></ul>
+<p class="note">Assumptions: federal tax only, standard deduction, W-2 wages, no other income. Payroll tax savings assume wages under the Social Security wage base; above it, only Medicare is saved. Above $200,000 of wages ($250,000 married filing jointly) an extra 0.9% Medicare tax applies (not modeled; IRS Topic 560). California and New Jersey don't follow the federal HSA tax break, so HSA contributions are taxed by those states (California FTB 3805P instructions; New Jersey Assembly Bill A2634 statement, 2026). The return is an assumption, not a promise.</p>
+<h2>Sources</h2>
+<ul class="src"><li>HSA limits for 2027 ($4,500 self-only, $9,000 family): IRS Rev. Proc. 2026-24.</li><li>Health FSA limit and carryover for 2026 ($3,400 and $680): IRS Rev. Proc. 2025-32. The 2027 FSA figures and tax brackets were not yet published on October 31, 2026.</li><li>2026 tax brackets and standard deduction: IRS Rev. Proc. 2025-32.</li><li>HSA catch-up ($1,000 at 55+), qualified expenses, reimbursement timing, carryover vs grace period: IRS Publication 969; IRS Notice 2013-71.</li><li>Additional 0.9% Medicare tax thresholds: IRS Topic 560.</li><li>State HSA treatment: California FTB 3805P instructions; New Jersey Assembly Bill A2634 (2026) statement.</li><li>Social Security wage base 2026 ($184,500): SSA 2026 COLA fact sheet.</li></ul>
+<p class="note">Every figure on this site is checked against our spreadsheet version of the calculator before it goes up. Spot an error? It goes on the <a href="../sources.html#corrections">corrections log</a>.</p>
+</main>
+<footer class="site"><div>
+  Education only, not personal tax or financial advice. Federal figures; your state and your plan documents may differ.
+  · <a href="../sources.html">Sources &amp; updates</a> · <a href="../privacy.html">Privacy policy</a> · Updated October 31, 2026
+</div></footer>
+<script src="../assets/dm.js"></script><script src="../assets/ui.js"></script>
+<script>
+const {$, pct, tile, rows, bars} = DMUI;
+DMUI.mount({ fields: [{group:'Your situation'},
+ {id:'status',label:'Filing status',options:[['single','Single'],['mfj','Married filing jointly']],value:'single'},
+ {id:'salary',label:'Annual salary (W-2)',value:90000,step:500},
+ {id:'expected',label:'Medical costs you expect next year',value:2000,step:50},
+ {id:'amount',label:'Amount you\'d put in this year (HSA or FSA)',value:2000,step:50},
+ {group:'HSA'},
+ {id:'coverage',label:'HSA coverage (if your health plan qualifies)',options:[['self','Self-only'],['family','Family']],value:'self'},
+ {id:'age55',label:'Are you 55 or older?',options:[['no','No'],['yes','Yes']],value:'no'},
+ {id:'hsaYearly',label:'Amount you\'d put in each year',value:4500,step:100},
+ {id:'years',label:'Years you leave it invested',value:20,step:1,int:true,max:60},
+ {id:'ret',label:'Yearly return you assume (%)',value:0.06,pct:true,step:0.5,max:30},
+ {group:'FSA'},
+ {id:'fsaSpend',label:'What you actually end up spending',value:1200,step:50},
+ {id:'carryover',label:'Your plan\'s carryover ($0 if none)',value:680,step:10}],
+  compute: v => DM.hsaFsa({...v, age55: v.age55==='yes'}),
+  render: r => '<div class="tiles">' + tile('You save through payroll', $(r.savedPayroll), 'HSA or FSA, year one', 'g')
+  + tile('HSA after the years invested', $(r.hsaGrown), $(r.leftover) + ' a year left over, invested') + '</div>'
+  + rows([['Your federal tax bracket', pct(r.bracket)], ['Federal income tax saved', $(r.fedSaved)], ['Payroll tax saved (Social Security + Medicare)', $(r.payrollSaved)],
+          ['Total saved through payroll', $(r.savedPayroll), 1], ['If you fund an HSA on your own instead', $(r.savedOwn)]])
+  + '<div class="group" style="margin-top:16px">FSA: use it or lose it</div>'
+  + rows([['Left unused at year-end', $(r.unused)], ['Money you\'d lose', $(r.lost)], ['Net result (tax saved minus money lost)', $(r.fsaNet), 1]])
+  + '<div class="group" style="margin-top:16px">HSA: invest what you don\'t spend</div>'
+  + bars([['Spend from the HSA, invest the rest', r.hsaGrown], ['Pay costs yourself, keep receipts, invest it all', r.hsaReceipts, 'g']])
+  + rows([['Your HSA limit (2027)', $(r.hsaLimit)], ['Health FSA limit (2026)', $(r.fsaLimit)], ['Limit check', r.limitCheck]])
+  + (r.limitCheck !== 'Within both limits' ? '<div class="callout o">' + r.limitCheck + '. Lower the amount to stay within the IRS limit.</div>' : '') });
+</script>
+</body>
+</html>

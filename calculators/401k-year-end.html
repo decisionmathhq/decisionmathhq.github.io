@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>401(k) Year-End Calculator: Can You Still Max It Out? | Decision Math</title>
+<meta name="description" content="See whether you can still reach the 2026 401(k) limit with your last paychecks, how much tax you save, how much each paycheck shrinks, and whether you are missing employer match.">
+<link rel="canonical" href="https://decisionmathhq.github.io/calculators/401k-year-end.html">
+<meta property="og:title" content="401(k) Year-End Calculator: Can You Still Max It Out? | Decision Math">
+<meta property="og:description" content="See whether you can still reach the 2026 401(k) limit with your last paychecks, how much tax you save, how much each paycheck shrinks, and whether you are missing employer match.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://decisionmathhq.github.io/calculators/401k-year-end.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="top"><div>
+  <a class="brand" href="../index.html">Decision <span>Math</span></a>
+  <nav><a href="../index.html#calculators">Calculators</a><a href="../index.html#videos">Videos</a><a href="../sources.html">Sources &amp; updates</a><a href="https://www.youtube.com/@decisionmathhq">YouTube</a></nav>
+</div></header>
+<main>
+<p class="kicker">Free calculator</p>
+<h1>401(k) year-end calculator</h1>
+<p class="lede">Raising your 401(k) rate for the last few paychecks of the year can cut your tax bill. Enter your pay and plan details to see whether you can still reach the limit, what it saves you, and what it does to each paycheck.</p>
+<div class="calc" style="margin-top:22px">
+  <form class="panel" id="inputs" onsubmit="return false"></form>
+  <section class="panel" aria-live="polite"><h3>Your results</h3><div id="results"></div></section>
+</div>
+<p class="note">Prefer a spreadsheet? <a href="https://docs.google.com/spreadsheets/d/1xnHpF-hxxgLZ0AzLLIkU-oWTUlpaiw_TxVNoCfzvB9w/copy">Make your own copy in Google Sheets</a> (same math).</p>
+<h2>How this calculator works</h2>
+<p>Traditional (pre-tax) 401(k) money skips federal income tax, so raising your rate for the last paychecks lowers this year's tax. It does not skip Social Security and Medicare tax, so the tax saved comes from your federal bracket only. Each paycheck shrinks by the extra you put in minus the tax you save.</p>
+<ul><li>The limit applies across all your 401(k) plans for the year (IRS 401(k) contribution limits page). Age 50 or older can add $8,000 for 2026; ages 60 to 63 can add $11,250 instead.</li>
+<li>If last year's Social Security wages from your employer topped $150,000, catch-up money must go in as Roth (2026).</li>
+<li>A "true-up" pays the full match at year-end. Check your plan documents or ask HR.</li>
+<li>Roth 401(k) contributions save no tax now and are not modeled here.</li></ul>
+<p class="note">Assumptions: federal tax only, standard deduction, W-2 wages, no bonuses or other pre-tax deductions, actual paycheck withholding not modeled. The match default (50% up to 6%) is an example, not an average: about half of workers in such plans had a 6% cap (BLS, 2015 data). Enter your own plan.</p>
+<h2>Sources</h2>
+<ul class="src"><li>2026 401(k) deferral limit ($24,500), catch-up ($8,000; $11,250 at 60 to 63), Roth catch-up wage threshold ($150,000): IRS IR-2025-111; final regulations T.D. 10033.</li><li>401(k) deferrals still count as wages for Social Security and Medicare: IRS Topic 424.</li><li>2026 tax brackets and standard deduction: IRS Rev. Proc. 2025-32.</li><li>Limit applies across all plans: IRS, 401(k) and profit-sharing plan contribution limits.</li><li>Match caps: BLS Beyond the Numbers, Vol. 5 No. 17 (2015 data).</li></ul>
+<p class="note">Every figure on this site is checked against our spreadsheet version of the calculator before it goes up. Spot an error? It goes on the <a href="../sources.html#corrections">corrections log</a>.</p>
+</main>
+<footer class="site"><div>
+  Education only, not personal tax or financial advice. Federal figures; your state and your plan documents may differ.
+  · <a href="../sources.html">Sources &amp; updates</a> · <a href="../privacy.html">Privacy policy</a> · Updated October 31, 2026
+</div></footer>
+<script src="../assets/dm.js"></script><script src="../assets/ui.js"></script>
+<script>
+const {$, pct, tile, rows, bars} = DMUI;
+DMUI.mount({ fields: [{group:'You'},
+ {id:'status',label:'Filing status',options:[['single','Single'],['mfj','Married filing jointly']],value:'single'},
+ {id:'salary',label:'Annual salary (W-2)',value:100000,step:500},
+ {id:'age',label:'Age at year-end',options:[['under50','Under 50'],['50plus','50 to 59 or 64+'],['60to63','60 to 63']],value:'under50'},
+ {id:'checks',label:'Paychecks per year',value:26,step:1,int:true,min:1,max:52},
+ {id:'left',label:'Paychecks left this year',value:3,step:1,int:true,max:52},
+ {id:'rate',label:'Traditional 401(k) rate so far (%)',value:0.06,pct:true,step:1,max:100},
+ {id:'newRate',label:'New rate for the paychecks left (%)',value:0.8,pct:true,step:1,max:100},
+ {group:'Your plan'},
+ {id:'planMax',label:'Most your plan lets you defer per paycheck (%)',value:0.8,pct:true,step:1,max:100},
+ {id:'match',label:'Employer match: cents per dollar you put in',value:0.5,step:0.05,max:5},
+ {id:'matchCap',label:'Employer matches up to this % of your pay',value:0.06,pct:true,step:1,max:100},
+ {id:'trueUp',label:'Does your plan do a year-end "true-up"?',options:[['no','No'],['yes','Yes']],value:'no'}],
+  compute: v => { v.checks = Math.max(1, v.checks); v.left = Math.min(v.left, v.checks); return DM.k401({...v, trueUp: v.trueUp==='yes'}); },
+  render: r => '<div class="tiles">' + tile('Federal tax you save', $(r.taxSaved), 'on the extra you put in', 'g')
+  + tile('Each paycheck shrinks by', $(r.shrink), 'take-home cost of each $1: ' + (r.costPerDollar*100).toFixed(0) + '¢', 'o') + '</div>'
+  + rows([['Gross pay per paycheck', $(r.perCheck)], ['Your 2026 limit', $(r.limit)], ['Put in so far this year', $(r.soFar)], ['Room left under the limit', $(r.room)],
+          ['Needed per paycheck to reach the limit', $(r.needed)], ['Most you can put in per paycheck', $(r.maxPerCheck)], ['Can you reach the limit?', r.canReach ? 'Yes' : 'No', 1]])
+  + '<div class="group" style="margin-top:16px">What it does for the paychecks left</div>'
+  + rows([['Extra you put in (vs staying at your current rate)', $(r.extra)], ['Taxable income at your current rate', $(r.taxable)], ['Your federal tax bracket', pct(r.bracket)], ['Federal income tax you save', $(r.taxSaved), 1]])
+  + '<div class="group" style="margin-top:16px">Your employer match</div>'
+  + rows([['Extra match from the change (paychecks left)', $(r.extraMatch)], ['Match missed earlier this year', $(r.missedMatch)]])
+  + '<div class="callout' + (r.belowMatch ? ' o' : '') + '">' + (r.belowMatch ? 'You are below the full match. Raising to at least the match cap is the first move.' : 'You already get the full match on each paycheck.')
+  + (r.missedMatch > 0 ? (r.trueUpBack > 0 ? ' A true-up should pay back the missed match.' : ' Without a true-up, the missed match is gone.') : '') + '</div>'
+  + (r.rothWarning ? '<div class="callout o">Heads-up: if last year\'s Social Security wages from this employer were over $150,000, your catch-up dollars must be Roth, so the tax saved above is too high.</div>' : '') });
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HDHP vs PPO Calculator: High Deductible (HSA) Plan or PPO? | Decision Math</title>
+<meta name="description" content="Compare a high-deductible HSA plan with a PPO for your family: premiums, deductibles, out-of-pocket costs, the employer HSA deposit and the tax you save. Includes a bad-year check.">
+<link rel="canonical" href="https://decisionmathhq.github.io/calculators/hdhp-vs-ppo.html">
+<meta property="og:title" content="HDHP vs PPO Calculator: High Deductible (HSA) Plan or PPO? | Decision Math">
+<meta property="og:description" content="Compare a high-deductible HSA plan with a PPO for your family: premiums, deductibles, out-of-pocket costs, the employer HSA deposit and the tax you save. Includes a bad-year check.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://decisionmathhq.github.io/calculators/hdhp-vs-ppo.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="top"><div>
+  <a class="brand" href="../index.html">Decision <span>Math</span></a>
+  <nav><a href="../index.html#calculators">Calculators</a><a href="../index.html#videos">Videos</a><a href="../sources.html">Sources &amp; updates</a><a href="https://www.youtube.com/@decisionmathhq">YouTube</a></nav>
+</div></header>
+<main>
+<p class="kicker">Free calculator</p>
+<h1>HDHP vs PPO calculator</h1>
+<p class="lede">Enter both plans from their Summary of Benefits and Coverage and your expected medical costs. The calculator totals what each plan really costs you, including the HSA's tax break, and checks a bad year where both plans hit their out-of-pocket maximum.</p>
+<div class="calc" style="margin-top:22px">
+  <form class="panel" id="inputs" onsubmit="return false"></form>
+  <section class="panel" aria-live="polite"><h3>Your results</h3><div id="results"></div></section>
+</div>
+<p class="note">Prefer a spreadsheet? <a href="https://docs.google.com/spreadsheets/d/19fngrcB1YPzqlOca16oVgJWF6C663KxMu54yw8x8gY4/copy">Make your own copy in Google Sheets</a> (same math).</p>
+<h2>How this calculator works</h2>
+<p>A plan's real cost is premiums plus what you pay when you use care. The HSA plan usually has lower premiums and a higher deductible, and it comes with two kinds of help: your employer's HSA deposit, and the tax you skip on your own deposit.</p>
+<ul><li>Out-of-pocket cost = your costs up to the deductible, then your coinsurance share, capped at the out-of-pocket maximum.</li>
+<li>Your own HSA deposit is what it takes to cover your out-of-pocket costs after the employer deposit, up to the family limit. It saves federal income tax plus Social Security and Medicare tax, because it goes through payroll.</li>
+<li>The bad-year check assumes both plans hit their out-of-pocket maximum and you deposit enough to cover it, up to the limit.</li></ul>
+<p class="note">Defaults are 2026 US averages for family coverage (KFF) and a typical family-of-four spending year (MEPS, total care costs paid by all payers: 1 in 4 families of four spend under $4,883, half under $11,790, 1 in 10 over $50,849, in 2024 dollars). The out-of-pocket maximums ($8,000 / $10,000) are example values, because KFF does not report an average family out-of-pocket maximum: enter yours. Not modeled: copays, separate drug deductibles, out-of-network bills, state income tax. California and New Jersey don't follow the federal HSA tax break, so HSA contributions are taxed by those states (California FTB 3805P instructions; New Jersey Assembly Bill A2634 statement, 2026).</p>
+<h2>Sources</h2>
+<ul class="src"><li>Average worker premiums, deductibles and employer HSA deposits for family coverage: KFF 2026 Employer Health Benefits Survey (figures 6.6, 7.18, 8.1).</li><li>Family-of-four medical spending percentiles (total spending by all payers): AHRQ Medical Expenditure Panel Survey, HC-256 (2024 dollars).</li><li>2027 HSA family limit ($9,000) and HDHP minimum deductible / out-of-pocket cap: IRS Rev. Proc. 2026-24.</li><li>HSA catch-up at 55+: IRS Publication 969.</li><li>State HSA treatment: California FTB 3805P instructions; New Jersey Assembly Bill A2634 (2026) statement.</li><li>2026 tax brackets and standard deduction: IRS Rev. Proc. 2025-32. Social Security wage base: SSA 2026 fact sheet.</li></ul>
+<p class="note">Every figure on this site is checked against our spreadsheet version of the calculator before it goes up. Spot an error? It goes on the <a href="../sources.html#corrections">corrections log</a>.</p>
+</main>
+<footer class="site"><div>
+  Education only, not personal tax or financial advice. Federal figures; your state and your plan documents may differ.
+  · <a href="../sources.html">Sources &amp; updates</a> · <a href="../privacy.html">Privacy policy</a> · Updated October 31, 2026
+</div></footer>
+<script src="../assets/dm.js"></script><script src="../assets/ui.js"></script>
+<script>
+const {$, pct, tile, rows, bars} = DMUI;
+DMUI.mount({ fields: [{group:'Your family'},
+ {id:'status',label:'Filing status',options:[['single','Single'],['mfj','Married filing jointly']],value:'mfj'},
+ {id:'wages',label:'Annual wages (W-2)',value:100000,step:500},
+ {id:'costs',label:'Medical costs you expect next year (full price)',value:11790,step:10},
+ {id:'age55',label:'Are you 55 or older?',options:[['no','No'],['yes','Yes']],value:'no'},
+ {group:'PPO (family coverage)'},
+ {id:'pPrem',label:'Premiums you pay per year',value:7860,step:10},
+ {id:'pDed',label:'Family deductible',value:3320,step:10},
+ {id:'pCo',label:'Coinsurance after the deductible (%)',value:0.2,pct:true,step:5,max:100},
+ {id:'pMax',label:'Family out-of-pocket maximum',value:8000,step:100},
+ {group:'HSA plan (family coverage)'},
+ {id:'hPrem',label:'Premiums you pay per year',value:6211,step:10},
+ {id:'hDed',label:'Family deductible',value:5380,step:10},
+ {id:'hCo',label:'Coinsurance after the deductible (%)',value:0.2,pct:true,step:5,max:100},
+ {id:'hMax',label:'Family out-of-pocket maximum',value:10000,step:100},
+ {id:'employer',label:'Employer HSA deposit per year',value:1346,step:10}],
+  compute: v => DM.hdhpPpo({status:v.status, wages:v.wages, costs:v.costs, age55:v.age55==='yes', employer:v.employer,
+     ppo:{premium:v.pPrem, ded:v.pDed, coins:v.pCo, oopMax:v.pMax}, hsa:{premium:v.hPrem, ded:v.hDed, coins:v.hCo, oopMax:v.hMax}}),
+  render: r => '<div class="tiles">' + tile(r.diff >= 0 ? 'The HSA plan saves you' : 'The PPO saves you', $(Math.abs(r.diff)), 'in the year you entered', r.diff >= 0 ? 'g' : 'o')
+  + tile(r.diffHeavy >= 0 ? 'Bad year: HSA plan saves' : 'Bad year: PPO saves', $(Math.abs(r.diffHeavy)), 'both plans hit their max', r.diffHeavy >= 0 ? 'g' : 'o') + '</div>'
+  + bars([['PPO total', r.ppoTotal, 'o'], ['HSA plan total', r.hsaTotal, 'g']])
+  + rows([['PPO: out-of-pocket costs', $(r.ppoOop)], ['PPO: total (premiums + out-of-pocket)', $(r.ppoTotal), 1],
+          ['HSA plan: out-of-pocket costs', $(r.hsaOop)], ['HSA plan: premiums + out-of-pocket', $(r.hsaGross)],
+          ['Minus the employer HSA deposit', '−' + $(r.employer)], ['Your own HSA deposit (covers your costs, up to the limit)', $(r.own)],
+          ['Minus the tax you save on your deposit', '−' + $(r.taxSaved)], ['HSA plan: total', $(r.hsaTotal), 1]])
+  + '<div class="group" style="margin-top:16px">Bad-year check</div>'
+  + rows([['PPO: premiums + out-of-pocket max', $(r.ppoHeavy)], ['HSA plan: premiums + max, after HSA money', $(r.hsaHeavy)]])
+  + '<div class="callout' + (r.diffHeavy < 0 ? ' o' : '') + '">' + (r.diffHeavy < 0 ? 'The HSA plan\'s higher out-of-pocket max costs more than its tax break in a bad year.' : 'The HSA plan still wins even if both plans hit their max.') + '</div>'
+  + rows([['Your federal tax bracket', pct(r.bracket)], ['Family HSA limit, employer + you (2027)', $(r.hsaLimit)]]) });
+</script>
+</body>
+</html>

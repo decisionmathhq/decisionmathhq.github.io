@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tax-Loss Harvesting Calculator (2026) | Decision Math</title>
+<meta name="description" content="Estimate how much federal tax tax-loss harvesting saves this year, how much loss carries forward, and how much tax it may only defer. 2026 brackets and capital gain rates.">
+<link rel="canonical" href="https://decisionmathhq.github.io/calculators/tax-loss-harvesting.html">
+<meta property="og:title" content="Tax-Loss Harvesting Calculator (2026) | Decision Math">
+<meta property="og:description" content="Estimate how much federal tax tax-loss harvesting saves this year, how much loss carries forward, and how much tax it may only defer. 2026 brackets and capital gain rates.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://decisionmathhq.github.io/calculators/tax-loss-harvesting.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="top"><div>
+  <a class="brand" href="../index.html">Decision <span>Math</span></a>
+  <nav><a href="../index.html#calculators">Calculators</a><a href="../index.html#videos">Videos</a><a href="../sources.html">Sources &amp; updates</a><a href="https://www.youtube.com/@decisionmathhq">YouTube</a></nav>
+</div></header>
+<main>
+<p class="kicker">Free calculator</p>
+<h1>Tax-loss harvesting calculator</h1>
+<p class="lede">Selling investments at a loss can offset gains and up to $3,000 a year of ordinary income. Enter your wages, the losses you could harvest and any gains you already have to see the tax saved now, the carryover, and the catch: a lower cost basis later.</p>
+<div class="calc" style="margin-top:22px">
+  <form class="panel" id="inputs" onsubmit="return false"></form>
+  <section class="panel" aria-live="polite"><h3>Your results</h3><div id="results"></div></section>
+</div>
+
+<h2>How this calculator works</h2>
+<p>Losses first offset gains of the same type (short-term against short-term, long-term against long-term), then the other type. If you end with a net loss, up to $3,000 of it ($1,500 married filing separately) offsets ordinary income each year and the rest carries forward with no time limit. Harvested losses that offset long-term gains save tax at your capital gains rate (0%, 15% or 20%); losses that offset wages save at your ordinary bracket.</p>
+<p>Later years assume the same wages and no other gains, under today's law, so they are an estimate.</p>
+<p class="note">Assumptions: federal only, wages are your only other income, standard deduction, no Net Investment Income Tax (3.8% above $200,000 single / $250,000 married MAGI), no state tax, no qualified dividends. Married filing separately is not modeled.</p>
+<h2>Sources</h2>
+<ul class="src"><li>$3,000 yearly limit on net capital loss against ordinary income, carryover, and the 0% / 15% / 20% capital gain rates: IRS Topic 409; Schedule D instructions.</li><li>Wash-sale rule (30 days before or after, substantially identical, including IRA purchases): IRC §1091; Rev. Rul. 2008-5.</li><li>Disallowed loss added to the basis of replacement shares: IRC §1091(d).</li><li>2026 capital gain rate breakpoints ($49,450 / $545,500 single; $98,900 / $613,700 married): IRS Rev. Proc. 2025-32 §4.03.</li><li>Net Investment Income Tax thresholds: IRS Topic 559.</li><li>2026 tax brackets and standard deduction: IRS Rev. Proc. 2025-32.</li></ul>
+<p class="note">Every figure on this site is checked against our spreadsheet version of the calculator before it goes up. Spot an error? It goes on the <a href="../sources.html#corrections">corrections log</a>.</p>
+</main>
+<footer class="site"><div>
+  Education only, not personal tax or financial advice. Federal figures; your state and your plan documents may differ.
+  · <a href="../sources.html">Sources &amp; updates</a> · <a href="../privacy.html">Privacy policy</a> · Updated October 31, 2026
+</div></footer>
+<script src="../assets/dm.js"></script><script src="../assets/ui.js"></script>
+<script>
+const {$, pct, tile, rows, bars} = DMUI;
+DMUI.mount({ fields: [{group:'You'},
+ {id:'status',label:'Filing status',options:[['single','Single'],['mfj','Married filing jointly']],value:'single'},
+ {id:'wages',label:'Annual wages (W-2)',value:100000,step:500},
+ {group:'Losses you could harvest'},
+ {id:'lossSt',label:'Short-term losses (held 1 year or less)',value:3000,step:100},
+ {id:'lossLt',label:'Long-term losses (held more than 1 year)',value:4000,step:100},
+ {group:'Gains you already have this year'},
+ {id:'otherSt',label:'Short-term gains',value:0,step:100},
+ {id:'otherLt',label:'Long-term gains',value:0,step:100}],
+  compute: v => DM.tlh(v),
+  render: r => '<div class="tiles">' + tile('Tax saved this year', $(r.saved), 'federal income tax', 'g')
+  + tile('Loss carried forward', $(r.carry), r.carry > 0 ? 'worth about ' + $(r.laterSaved) + ' in later years' : 'all used this year') + '</div>'
+  + rows([['Federal tax without harvesting', $(r.taxWithout)], ['Federal tax with harvesting', $(r.taxWith)], ['Saved this year', $(r.saved), 1],
+          ['Loss used against your wages (max $3,000)', $(r.deducted)], ['Loss carried to next year', $(r.carry)]]
+     .concat(r.years.slice(0, 5).map((y, n) => ['Year ' + (n + 2) + ': saved from the carryover', $(y)])))
+  + '<div class="group" style="margin-top:16px">The catch: some of it is deferred</div>'
+  + '<p class="note">If you buy similar (not substantially identical) investments, your new cost basis is lower by about ' + $(r.harvested) + '. When you sell those later, that becomes extra taxable gain:</p>'
+  + rows([['At a 0% capital gains rate', $(r.futureTax[0])], ['At 15%', $(r.futureTax[1])], ['At 20%', $(r.futureTax[2])]])
+  + '<div class="callout o">Wash-sale rule: buying the same or a substantially identical investment within 30 days before or after the sale, including in your IRA or Roth IRA, disallows the loss. An IRA purchase can lose it for good.</div>' });
+</script>
+</body>
+</html>
