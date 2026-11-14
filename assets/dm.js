@@ -130,6 +130,28 @@
     return r;
   }
 
-  const api = { D, tax, bracket, payroll, fv, hsaFsa, hdhpPpo, k401, totalTax, tlh };
+  // ---- Video 5: 0% financing vs deferred interest (port of v05_zero_financing.py) ----
+  // Monthly method, as in the CFPB Dec 2024 issue spotlight: interest on each month's balance
+  // after that month's payment = balance x APR / 12. Real issuers use daily balances (a bit higher).
+  function zeroFin(i) {
+    // v2 2026-11-14: date-aware payoff. "payments" = payments you will make before the promo end date
+    // (defaults to the promo months). Back interest: CFPB Issue Spotlight endnote 117 monthly method,
+    // balance after each payment x APR/12 over the promo months, payments on time, no new purchases, no fees.
+    const r = {}, months = Math.max(1, Math.round(i.months));
+    const payments = Math.min(months, Math.max(1, Math.round(i.payments || months)));
+    r.payments = payments;
+    r.payoff = Math.ceil(i.price / payments * 100) / 100;
+    r.early = payments > 1 ? Math.ceil(i.price / (payments - 1) * 100) / 100 : r.payoff;
+    let b = i.price, sum = 0;
+    for (let m = 0; m < months; m++) { if (m < payments) b = pos(b - i.pay); sum += b * i.apr / 12; }
+    r.left = b < 0.005 ? 0 : b;
+    r.paid = i.price - r.left;
+    r.backInterest = r.left > 0 ? sum : 0;
+    r.owedDeferred = r.left + r.backInterest;
+    r.trueZeroNext = r.left * i.gpApr / 12;
+    r.short = pos(r.payoff - i.pay);
+    return r;
+  }
+  const api = { D, tax, bracket, payroll, fv, hsaFsa, hdhpPpo, k401, totalTax, tlh, zeroFin };
   if (typeof module !== 'undefined') module.exports = api; else root.DM = api;
 })(this);

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>0% Financing vs Deferred Interest Calculator | Decision Math</title>
+<meta name="description" content="See the monthly payment that keeps a "no interest if paid in full" deal at zero, and what back-dated deferred interest would cost if you fall short.">
+<link rel="canonical" href="https://decisionmathhq.github.io/calculators/zero-percent-financing.html">
+<meta property="og:title" content="0% Financing vs Deferred Interest Calculator | Decision Math">
+<meta property="og:description" content="See the monthly payment that keeps a "no interest if paid in full" deal at zero, and what back-dated deferred interest would cost if you fall short.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://decisionmathhq.github.io/calculators/zero-percent-financing.html">
+<meta property="og:image" content="https://decisionmathhq.github.io/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="top"><div>
+  <a class="brand" href="../index.html">Decision <span>Math</span></a>
+  <nav><a href="../index.html#calculators">Calculators</a><a href="../index.html#videos">Videos</a><a href="../sources.html">Sources &amp; updates</a><a href="https://www.youtube.com/@decisionmathhq">YouTube</a></nav>
+</div></header>
+<main>
+<p class="kicker">Free calculator</p>
+<h1>0% financing vs deferred interest calculator</h1>
+<p class="lede">"No interest if paid in full" is not the same as a 0% APR. If even a little is left at the deadline, a deferred interest deal can charge interest on the whole purchase, back to the day you bought it. Enter the price, the promo length, the card's rate, how many payments you'll make before the promo end date, and what you plan to pay each month.</p>
+<div class="calc" style="margin-top:22px">
+  <form class="panel" id="inputs" onsubmit="return false"></form>
+  <section class="panel" aria-live="polite"><h3>Your results</h3><div id="results"></div></section>
+</div>
+
+<h2>How this calculator works</h2>
+<p>Find the promo end date on the front of your statement. It can differ from your regular payment due date. To owe no interest, the whole promo balance must be paid by that date. Divide the balance by the number of payments you will actually make before then, round up, and pay at least that (and never less than your required minimum), on time. If you pay less, something is left at the deadline. On a deferred interest deal, the bill then adds the interest that was counted all along at the card's full rate. On a true 0% intro APR card, interest only starts on what's left, from the deadline on.</p>
+<p>The back interest uses the same simplified monthly method as the CFPB's own worked example: each month's balance after that month's payment, times the APR divided by 12. Our version reproduces the CFPB example exactly: $4,500 over 24 months with $180 left at 31.99% gives $1,439.55. Card issuers work interest out on daily balances and your actual payment dates, so treat the result as an estimate; your real charge can differ.</p>
+<p class="note">Assumptions: one purchase on the card, no other balances, every payment on time, no fees. With other purchases on the same card, payments above the minimum go to the highest-rate balance first by default; in the last two billing cycles before the deadline they must go to the promo balance first (Regulation Z, 12 CFR 1026.53(b)(1)(i)). You can ask your card company to send extra payments to the promo balance earlier; it may agree but doesn't have to (12 CFR 1026.53(b)(1)(ii)). Being more than 60 days late on a minimum payment can end the deferred interest deal; a shorter delay can still bring a late fee. This is for credit cards only. Buy now, pay later plans and car loans have their own terms.</p>
+<h2>Sources</h2>
+<ul class="src"><li>Deferred interest definition, "if paid in full" wording, minimum payments may not pay it off in time: Ask CFPB, "I got a credit card promising no interest for a purchase if I pay in full within 12 months. How does this work?" (reviewed Jan 22, 2024).</li><li>Worked example ($4,500, $180 left, $1,439.55), monthly method, typical deferred interest APR of 31.99%, top retailers' card APR of 32.66% (Dec 2024): CFPB Issue Spotlight, The High Cost of Retail Credit Cards, Dec 18, 2024.</li><li>Average general purpose card APR of 25.2% (2024), used for the true 0% comparison: CFPB Consumer Credit Card Market report, Dec 30, 2025.</li><li>Payment allocation and the last two billing cycles: 12 CFR 1026.53. The 60-day late rule: 12 CFR 1026.55(b)(4) and official commentary.</li></ul>
+<p class="note">Every figure on this site is checked against our calculator scripts before it goes up. Spot an error? It goes on the <a href="../sources.html#corrections">corrections log</a>.</p>
+</main>
+<footer class="site"><div>
+  Education only, not personal financial advice. Your card agreement's terms are what count.
+  · <a href="../sources.html">Sources &amp; updates</a> · <a href="../privacy.html">Privacy policy</a> · Calculator v2, updated November 14, 2026
+</div></footer>
+<script src="../assets/dm.js"></script><script src="../assets/ui.js"></script>
+<script>
+const {$, tile, rows} = DMUI;
+const c = n => '$' + n.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+DMUI.mount({ fields: [{group:'The deal'},
+ {id:'price',label:'Purchase price',value:1200,step:10},
+ {id:'months',label:'Promo length (months)',value:12,step:1,int:true,min:1,max:60},
+ {id:'apr',label:'Card APR (%), from the card terms',value:0.3199,step:0.01,pct:true,max:100},
+ {group:'Your plan'},
+ {id:'payments',label:'Payments you will make before the promo end date',value:12,step:1,int:true,min:1,max:60},
+ {id:'pay',label:'What you will pay each month',value:90,step:5},
+ {group:'For the true 0% comparison'},
+ {id:'gpApr',label:'Rate after a true 0% promo ends (%)',value:0.252,step:0.1,pct:true,max:100}],
+  compute: v => DM.zeroFin(v),
+  render: r => '<div class="tiles">' + tile('Pay at least this to owe $0', c(r.payoff), 'balance divided by your ' + r.payments + ' payments before the end date, rounded up', 'g') + tile('To finish one payment early', c(r.early), 'safer: leaves a month of slack', 'g')
+  + tile('If it\'s deferred interest', r.left > 0 ? c(r.backInterest) : '$0.00', r.left > 0 ? 'back interest added at the deadline' : 'paid in full on time: no interest', r.left > 0 ? 'o' : 'g') + '</div>'
+  + rows([['Paid by the deadline', c(r.paid)], ['Left at the deadline', c(r.left)],
+          ['Deferred interest card: you\'d owe', c(r.owedDeferred), 1],
+          ['True 0% card: you\'d owe', c(r.left)], ['True 0% card: next month\'s interest', c(r.trueZeroNext)]])
+  + (r.short > 0 ? '<div class="callout o">You\'re ' + c(r.short) + ' a month short. On a deferred interest deal, close isn\'t good enough: only paying the whole promo balance by the end date avoids the back interest. Set autopay to at least ' + c(r.payoff) + ' (' + c(r.early) + ' finishes a payment early), and check each statement that the promo balance is falling.</div>'
+                 : '<div class="callout">On track, if every payment arrives on time. Keep other purchases off this card, never pay less than the required minimum, and check each statement that the promo balance is falling.</div>') });
+</script>
+</body>
+</html>
