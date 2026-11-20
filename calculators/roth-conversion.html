@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roth Conversion Calculator (2026): How Much to Convert | Decision Math</title>
+<meta name="description" content="Find how much you can convert to a Roth IRA before you leave your tax bracket, the federal tax on the conversion, and how it compares with paying tax later. 2026 brackets.">
+<link rel="canonical" href="https://decisionmathhq.github.io/calculators/roth-conversion.html">
+<meta property="og:title" content="Roth Conversion Calculator (2026): How Much to Convert | Decision Math">
+<meta property="og:description" content="Find how much you can convert to a Roth IRA before you leave your tax bracket, the federal tax on the conversion, and how it compares with paying tax later. 2026 brackets.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://decisionmathhq.github.io/calculators/roth-conversion.html">
+<meta property="og:image" content="https://decisionmathhq.github.io/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<header class="top"><div>
+  <a class="brand" href="../index.html">Decision <span>Math</span></a>
+  <nav><a href="../index.html#calculators">Calculators</a><a href="../index.html#videos">Videos</a><a href="../sources.html">Sources &amp; updates</a><a href="https://www.youtube.com/@decisionmathhq">YouTube</a></nav>
+</div></header>
+<main>
+<p class="kicker">Free calculator</p>
+<h1>Roth conversion calculator</h1>
+<p class="lede">A Roth conversion moves money from a traditional IRA to a Roth IRA. The amount you convert is added to this year's income and taxed. Enter this year's wages and an amount to see where your bracket ends, the federal tax on the conversion, and how that compares with paying tax on the same dollars later.</p>
+<div class="calc" style="margin-top:22px">
+  <form class="panel" id="inputs" onsubmit="return false"></form>
+  <section class="panel" aria-live="polite"><h3>Your results</h3><div id="results"></div></section>
+</div>
+
+<h2>How this calculator works</h2>
+<p>Tax on the conversion is your federal income tax with the conversion added, minus your tax without it, using the 2026 brackets and the standard deduction. "Room left in your bracket" is the gap between your taxable income and the top of your current bracket: converting up to that amount keeps every converted dollar at your current rate.</p>
+<p>The comparison with later uses the same dollars taxed at the rate you enter. If the tax comes out of the account in both cases, growth multiplies both sides by the same amount, so the comparison holds at any return. Paying the conversion tax from savings favors the Roth a little more. Your future tax rate is a guess, so try more than one.</p>
+<p class="note">Assumptions: federal income tax only (your state may tax the conversion too); wages are your only other income; standard deduction; no after-tax (nondeductible) money in any traditional IRA you own. If you have after-tax money in a traditional IRA, the pro-rata rule decides how much of a conversion is taxed and this math doesn't apply. A conversion also raises income used for the marketplace premium tax credit and, from age 63, for Medicare premiums two years later. Those effects are not calculated here.</p>
+<h2>Sources</h2>
+<ul class="src"><li>A conversion is taxable income; conversions can't be recharacterized (undone) since 2018: IRS Publication 590-A.</li><li>Each conversion has its own 5-year period; the 10% additional tax on early distributions before age 59&frac12;: IRS Publication 590-B.</li><li>2026 tax brackets and standard deduction: IRS Rev. Proc. 2025-32.</li><li>Medicare income-related premiums use income from two years earlier: SSA POMS HI 01101.010.</li></ul>
+<p class="note">Every figure on this site is checked against our calculator before it goes up. Spot an error? It goes on the <a href="../sources.html#corrections">corrections log</a>.</p>
+</main>
+<footer class="site"><div>
+  Education only, not personal tax or financial advice. Federal figures; your state may differ.
+  · <a href="../sources.html">Sources &amp; updates</a> · <a href="../privacy.html">Privacy policy</a> · Calculator v1, updated November 20, 2026
+</div></footer>
+<script src="../assets/dm.js"></script><script src="../assets/ui.js"></script>
+<script>
+const {$, pct, tile, rows, bars} = DMUI;
+const fmtTop = x => x === Infinity ? 'no upper limit' : $(x);
+DMUI.mount({ fields: [{group:'This year'},
+ {id:'status',label:'Filing status',options:[['single','Single'],['mfj','Married filing jointly']],value:'single'},
+ {id:'wages',label:'Wages and other income this year',value:30000,step:500},
+ {id:'conv',label:'Amount to convert',value:36500,step:500},
+ {group:'Later'},
+ {id:'laterRate',label:'Your tax rate when the money would come out (%)',value:0.22,pct:true,step:1,max:37},
+ {group:'Your situation'},
+ {id:'under59',label:'Under age 59½?',options:[['yes','Yes'],['no','No']],value:'yes'},
+ {id:'fromIra',label:'Pay the tax by withholding from the IRA?',options:[['no','No, from savings'],['yes','Yes, withhold from the IRA']],value:'no'},
+ {id:'age63',label:'Age 63 or older?',options:[['no','No'],['yes','Yes']],value:'no'}],
+  compute: v => DM.rothConv({...v, under59: v.under59==='yes', fromIra: v.fromIra==='yes', age63: v.age63==='yes'}),
+  render: r => '<div class="tiles">' + tile('Room left in your bracket', $(r.room), 'convert up to this to stay at ' + pct(r.bracket), 'g')
+  + tile('Federal tax on this conversion', $(r.taxNow), 'about ' + pct(r.avgRate, 1) + ' of the amount', r.overRoom > 0 ? 'o' : '') + '</div>'
+  + rows([['Taxable income before converting', $(r.taxable)], ['Your current bracket', pct(r.bracket)], ['Top of that bracket (taxable income)', fmtTop(r.bracketTop)],
+          ['Bracket after converting', pct(r.marginalAfter)], ['Amount above your current bracket', $(r.overRoom)]])
+  + '<div class="group" style="margin-top:16px">Now vs later, same dollars</div>'
+  + rows([['Tax if you convert now', $(r.taxNow)], ['Tax on the same dollars later, at your later rate', $(r.taxLater)],
+          [r.saved >= 0 ? 'Converting now costs less by' : 'Converting now costs more by', $(Math.abs(r.saved)), 1]])
+  + (r.overRoom > 0 ? '<div class="callout o">Part of this conversion lands in a higher bracket. To keep it all at ' + pct(r.bracket) + ', convert no more than ' + $(r.room) + '.</div>' : '')
+  + (r.withheldPenalty > 0 ? '<div class="callout o">Under 59½, tax withheld from the IRA doesn\'t reach the Roth and counts as an early distribution. The 10% additional tax on it could be about ' + $(r.withheldPenalty) + '. Paying from savings avoids this.</div>' : '')
+  + '<div class="callout">Before you convert: a conversion can\'t be undone, each conversion has its own 5-year clock for the 10% additional tax under 59½, and higher income can shrink a marketplace premium tax credit.'
+  + (r.age63 ? ' At 63 or older, it can also raise your Medicare premiums two years later.' : '') + '</div>' });
+</script>
+</body>
+</html>

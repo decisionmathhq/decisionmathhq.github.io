@@ -152,6 +152,28 @@
     r.short = pos(r.payoff - i.pay);
     return r;
   }
-  const api = { D, tax, bracket, payroll, fv, hsaFsa, hdhpPpo, k401, totalTax, tlh, zeroFin };
+
+  // ---- Video 6: Roth conversion in a low-income year (port of v06_roth_conversion.py) ----
+  // Tax on a conversion = tax(taxable + conversion) - tax(taxable), 2026 federal brackets.
+  // Assumes no after-tax (nondeductible) basis in any traditional IRA (pro-rata rule not modeled).
+  function rothConv(i) {
+    const r = {}, st = i.status, o = D.over[st];
+    r.taxable = pos(i.wages - D.sd[st]);
+    r.bracket = bracket(r.taxable, st);
+    const k = o.findIndex((x, n) => n + 1 >= o.length || o[n + 1] > r.taxable);
+    r.bracketTop = k + 1 < o.length ? o[k + 1] : Infinity;
+    r.room = r.bracketTop === Infinity ? 0 : r.bracketTop - r.taxable;
+    r.conv = Math.max(0, i.conv);
+    r.taxNow = Math.round(tax(r.taxable + r.conv, st) - tax(r.taxable, st));
+    r.avgRate = r.conv > 0 ? r.taxNow / r.conv : 0;
+    r.marginalAfter = r.conv > 0 ? bracket(r.taxable + r.conv - 0.01, st) : r.bracket; // rate on the last converted dollar
+    r.taxLater = Math.round(r.conv * i.laterRate);
+    r.saved = r.taxLater - r.taxNow;                         // > 0: converting now costs less
+    r.overRoom = pos(r.conv - r.room);
+    r.withheldPenalty = i.under59 && i.fromIra ? Math.round(r.taxNow * 0.10) : 0;
+    r.age63 = !!i.age63;
+    return r;
+  }
+  const api = { D, tax, bracket, payroll, fv, hsaFsa, hdhpPpo, k401, totalTax, tlh, zeroFin, rothConv };
   if (typeof module !== 'undefined') module.exports = api; else root.DM = api;
 })(this);
